@@ -1,0 +1,18 @@
+{
+  "name": "vilaverse",
+  "version": "1.0.0",
+  "description": "this is the mini project folder for sem 5",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "keywords": [
+    "Villa"
+  ],
+  "author": "Atharva Dhokte",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongoose": "^8.5.4"
+  }
+}
