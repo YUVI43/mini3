@@ -1,3 +1,5 @@
+// this file gives the description of the Indian cities where the user search the villa 
+
 module.exports = [
     {
         city: "Mumbai",

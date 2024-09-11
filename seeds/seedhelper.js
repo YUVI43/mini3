@@ -1,3 +1,6 @@
+
+// this is decribing the place, which can be modified 
+
 module.exports.descriptors = [
     'Forest',
     'Ancient',
