@@ -10,7 +10,7 @@ const { places, descriptors } = require('./seedhelper');//destructuring assingme
 const Campground = require('../models/campground');
 
 //creating db
-mongoose.connect('mongodb://127.0.0.1:27017/****', {
+mongoose.connect('mongodb://127.0.0.1:27017/villas', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })

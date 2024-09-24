@@ -9,9 +9,9 @@ const ejsmate = require('ejs-mate')
 
 
 //here give the name according which you gave in the seeds/index2 folder for database using connect (replace ** with name of db you given)
-mongoose.connect('mongodb://localhost:27017/***', {
+mongoose.connect('mongodb://127.0.0.1:27017/villas', {
     useNewUrlParser: true,
-    useCreateIndex: true,
+
     useUnifiedTopology: true
 });
 
@@ -30,10 +30,10 @@ const catchAsync = require('./utils/catchAsync')
 
 //Joi installing for validation of input data
 const Joi = require('joi')
-const { campgroundSchema } = require('./schemas')
+const { campgroundSchema,reviewSchema } = require('./schemas')
 
 //Using middleware to validate the campground       
-const validateCampground = (req, res, next) => {
+const validatevilla = (req, res, next) => {
     //Defining the JOI schema to validate data
 
     const { error } = campgroundSchema.validate(req.body)// passing the data from the request to the JOI validation and taking error part if present
@@ -46,9 +46,26 @@ const validateCampground = (req, res, next) => {
     }
 
 }
+//importing the reviews model
+const Review = require('./models/review')
+
+
+//Middleware for reviews validation
+const validateReview = (req, res, next) => {
+    const { error } = reviewSchema.validate(req.body)
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',')
+        throw new ExpressError(msg, 400);
+    } else {
+        next()
+    }
+}
 
 
 
+
+
+//middlewares
 app.engine('ejs', ejsmate)// used in layouts
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'))
@@ -60,19 +77,19 @@ app.get('/', (req, res) => {
     res.render('home')
 });
 
-//Listing all the campgrounds
+//Listing all the villas
 app.get('/villas', async (req, res) => {
     const campgrounds = await Campground.find({});
-    res.render('campgrounds', { campgrounds })
+    res.render('villas', { campgrounds })
 });
 
 
 
 //Creating new campground
 app.get('/campgrounds/new', (req, res) => {
-    res.render('campgrounds/new');
+    res.render('new');
 })
-app.post('/campgrounds', validateCampground, catchAsync(async (req, res, next) => {
+app.post('/campgrounds', validatevilla, catchAsync(async (req, res, next) => {
     // if (!req.body.campground) throw new ExpressError('Invalid Campground data ', 404)
     const campground = new Campground(req.body.campground);
     await campground.save();
@@ -80,11 +97,16 @@ app.post('/campgrounds', validateCampground, catchAsync(async (req, res, next) =
 }))
 
 
+
+
+
 //Get campground by id
 app.get('/campgrounds/:id', catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id)
+    const campground = await Campground.findById(req.params.id).populate('reviews')
     res.render('show', { campground })
 }))
+
+
 
 
 //Edit the campground after found
@@ -107,6 +129,33 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
 }))
 
 
+//reviews model
+app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    const review = new Review(req.body.review);
+    campground.reviews.push(review);
+    await review.save();
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`)
+
+}))
+
+//deletigng the reviews
+app.delete('/campgrounds/:id/reviews/:reviewId', catchAsync(async (req, res) => {
+    // await Review.findByIdAndDelete(req.)
+    // we are removing review id from only review table but from campground atable we need $pull method 
+    const { id, reviewId } = req.params;
+    await Review.findByIdAndDelete(reviewId);
+    await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    res.redirect(`/campgrounds/${id}`)
+
+
+}))
+
+
+
+
+
 //for varoius another error or invalid url request
 const ExpressError = require('./utils/expresserror')
 app.all('*', (req, res, next) => {
@@ -125,6 +174,6 @@ app.use((err, req, res, next) => {
 });
 
 
-app.listen(3000, () => {
+app.listen(4000, () => {
     console.log('Serving on port 3000')
 })
