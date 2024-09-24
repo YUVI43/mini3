@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');// method override for html forms using middleware 
-const villa = require('./models/villa');
+const Villa = require('./models/villa');
 const app = express();
 const ejsmate = require('ejs-mate')
 
@@ -11,7 +11,6 @@ const ejsmate = require('ejs-mate')
 //here give the name according which you gave in the seeds/index2 folder for database using connect (replace ** with name of db you given)
 mongoose.connect('mongodb://127.0.0.1:27017/villas', {
     useNewUrlParser: true,
-
     useUnifiedTopology: true
 });
 
@@ -21,7 +20,8 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
     console.log("Database connected");
 });
-
+//importing the reviews model
+const Review = require('./models/review')
 
 
 
@@ -46,8 +46,7 @@ const validatevilla = (req, res, next) => {
     }
 
 }
-//importing the reviews model
-const Review = require('./models/review')
+
 
 
 //Middleware for reviews validation
@@ -72,6 +71,13 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));//for form method overriding , for overriding drawback of the form
 
+
+
+
+
+
+
+
 //rendering intro page
 app.get('/', (req, res) => {
     res.render('home')
@@ -79,7 +85,7 @@ app.get('/', (req, res) => {
 
 //Listing all the villas
 app.get('/villas', async (req, res) => {
-    const villas = await villa.find({});
+    const villas = await Villa.find({});
     res.render('villaslist', { villas })
 });
 
@@ -91,7 +97,7 @@ app.get('/villas/new', (req, res) => {
 })
 app.post('/villas', validatevilla, catchAsync(async (req, res, next) => {
     // if (!req.body.villa) throw new ExpressError('Invalid villa data ', 404)
-    const villa = new villa(req.body.villa);
+    const villa = new Villa(req.body.villa);
     await villa.save();
     res.redirect(`/villas/${villa._id}`);
 }))
@@ -102,7 +108,7 @@ app.post('/villas', validatevilla, catchAsync(async (req, res, next) => {
 
 //Get villa by id
 app.get('/villas/:id', catchAsync(async (req, res) => {
-    const villa = await villa.findById(req.params.id).populate('reviews')
+    const villa = await Villa.findById(req.params.id).populate('reviews')
     res.render('show', { villa })
 }))
 
@@ -111,12 +117,13 @@ app.get('/villas/:id', catchAsync(async (req, res) => {
 
 //Edit the villa after found
 app.get('/villas/:id/edit', catchAsync(async (req, res) => {
-    const villa = await villa.findById(req.params.id)
+    const villa = await
+        Villa.findById(req.params.id)
     res.render('edit', { villa })
 }))
 app.put('/villas/:id', catchAsync(async (req, res) => {
     const { id } = req.params;
-    const villa = await villa.findByIdAndUpdate(id, { ...req.body.villa });//(... is the sprread operator)
+    const villa = await Villa.findByIdAndUpdate(id, { ...req.body.villa });//(... is the sprread operator)
     res.redirect(`/villas/${villa._id}`)
 }));
 
@@ -124,14 +131,14 @@ app.put('/villas/:id', catchAsync(async (req, res) => {
 //Delete villa
 app.delete('/villas/:id', catchAsync(async (req, res) => {
     const { id } = req.params;
-    await villa.findByIdAndDelete(id);
+    await Villa.findByIdAndDelete(id);
     res.redirect('/villas');
 }))
 
 
 //reviews model
 app.post('/villas/:id/reviews', validateReview, catchAsync(async (req, res) => {
-    const villa = await villa.findById(req.params.id);
+    const villa = await Villa.findById(req.params.id);
     const review = new Review(req.body.review);
     villa.reviews.push(review);
     await review.save();
@@ -146,7 +153,7 @@ app.delete('/villas/:id/reviews/:reviewId', catchAsync(async (req, res) => {
     // we are removing review id from only review table but from villa atable we need $pull method 
     const { id, reviewId } = req.params;
     await Review.findByIdAndDelete(reviewId);
-    await villa.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    await Villa.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
     res.redirect(`/villas/${id}`)
 
 
