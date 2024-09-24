@@ -9,16 +9,16 @@
 
 
 <div class="row">
-  <h1 class="text-center">Edit  Campground</h1>
+  <h1 class="text-center">Edit  villa</h1>
   <div class="col-6 offset-3">
-    <form action="/campgrounds/<%=campground._id%>?_method=PUT" method="POST">
+    <form action="/villas/<%=villa._id%>?_method=PUT" method="POST">
         <label class="form-label" for="title">Title</label>
         <input
           class="form-control"
           type="text"
           id="title"
-          name="campground[title]"
-          value="<%=campground.title %>">
+          name="villa[title]"
+          value="<%=villa.title %>">
         
       </div>
       <div class="mb-3">
@@ -27,8 +27,8 @@
           class="form-control"
           type="text"
           id="location"
-          name="campground[location]"
-          value="<%=campground.location %>">
+          name="villa[location]"
+          value="<%=villa.location %>">
         
       </div>
       <div class="mb-3">
@@ -37,16 +37,16 @@
           class="form-control"
           type="text"
           id="image"
-          name="campground[image]"
-          value="<%=campground.image %>">
+          name="villa[image]"
+          value="<%=villa.image %>">
         
       </div>
       
 
 
-      <button class="btn btn-success">Edit Campground</button>
+      <button class="btn btn-success">Edit villa</button>
     </form>
-     <a href="/campgrounds/<%= campground._id%>">Back To Campground</a> 
+     <a href="/villas/<%= villa._id%>">Back To villa</a> 
   </div>
 </div>
 

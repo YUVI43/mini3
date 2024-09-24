@@ -7,7 +7,7 @@
 const { default: mongoose } = require('mongoose');
 const cities = require('./cities');
 const { places, descriptors } = require('./seedhelper');//destructuring assingment importinmg two seperate variable in single line of code 
-const Campground = require('../models/campground');
+const villas= require('../models/villas');
 
 //creating db
 mongoose.connect('mongodb://127.0.0.1:27017/villas', {
@@ -30,11 +30,11 @@ const sample = array => array[Math.floor(Math.random() * array.length)];
 
 
 const seedDB = async () => {
-    await Campground.deleteMany({}); // this line deletes the previos data 
+    await villas.deleteMany({}); // this line deletes the previos data 
     for (let i = 0; i < 10; i++) {
         const random1000 = Math.floor(Math.random() * 10);
         // adding new data or row in the table 
-        const camp = new Campground({
+        const camp = new villas({
 
             //more things describing the villas can be added  can be added
             // this below codes populates the database

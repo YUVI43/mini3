@@ -1,15 +1,15 @@
 <% layout('/layouts/Boilerplate') %>
 <div class="row">
-  <h1 class="text-center">New Campground</h1>
+  <h1 class="text-center">New villa</h1>
   <div class="col-6 offset-3">
-    <form action="/campgrounds" method="POST" class="validate_form" novalidate>
+    <form action="/villas" method="POST" class="validate_form" novalidate>
       <div class="mb-3">
         <label class="form-label" for="title">Title</label>
         <input
           class="form-control"
           type="text"
           id="title"
-          name="campground[title]"
+          name="villa[title]"
           required
         />
         <div class="valid-feedback">Looks good!</div>
@@ -20,7 +20,7 @@
           class="form-control"
           type="text"
           id="location"
-          name="campground[location]"
+          name="villa[location]"
           required
         />
         <div class="valid-feedback">Looks good!</div>
@@ -31,16 +31,16 @@
           class="form-control"
           type="text"
           id="image"
-          name="campground[image]"
+          name="villa[image]"
           required
         />
         <div class="valid-feedback">Looks good!</div>
       </div>
 
 
-      <button class="btn btn-success">Add Campground</button>
+      <button class="btn btn-success">Add villa</button>
     </form>
-    <a href="/villas">All Campgrounds</a>
+    <a href="/villas">All villas</a>
   </div>
 </div>
 

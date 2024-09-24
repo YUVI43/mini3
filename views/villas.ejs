@@ -1,20 +1,20 @@
 <% layout('/layouts/Boilerplate') %>
-<h1>All Campgrounds</h1>
+<h1>All villas</h1>
 <div>
-  <a href="/campgrounds/new">Add a new campground</a>
+  <a href="/villas/new">Add a new villa</a>
 </div>
 
-<% for(let campground of campgrounds){ %>
+<% for(let villa of villas){ %>
 <div class="card mb-3">
   <div class="row">
     <div class="col-md-4">
-      <img class="img-fluid" src="<%= campground.image %>" />
+      <img class="img-fluid" src="<%= villa.image %>" />
     </div>
     <div class="col-md-8">
       <div class="card-body">
-        <h5 class="card-title"><%= campground.title %></h5>
-        <p class="card-text"> <small class="text-muted"><%= campground.location %></small></p>
-        <a href="/campgrounds/<%=campground._id %>" class="btn btn-primary">view</a>
+        <h5 class="card-title"><%= villa.title %></h5>
+        <p class="card-text"> <small class="text-muted"><%= villa.location %></small></p>
+        <a href="/villas/<%=villa._id %>" class="btn btn-primary">view</a>
     
       </div>
     </div>

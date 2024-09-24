@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');// method override for html forms using middleware 
-const Campground = require('./models/campground');
+const villa = require('./models/villas');
 const app = express();
 const ejsmate = require('ejs-mate')
 
@@ -30,13 +30,13 @@ const catchAsync = require('./utils/catchAsync')
 
 //Joi installing for validation of input data
 const Joi = require('joi')
-const { campgroundSchema,reviewSchema } = require('./schemas')
+const { villaSchema, reviewSchema } = require('./schemas')
 
-//Using middleware to validate the campground       
+//Using middleware to validate the villa       
 const validatevilla = (req, res, next) => {
     //Defining the JOI schema to validate data
 
-    const { error } = campgroundSchema.validate(req.body)// passing the data from the request to the JOI validation and taking error part if present
+    const { error } = villaSchema.validate(req.body)// passing the data from the request to the JOI validation and taking error part if present
     if (error) {
         //since the JOI is returning object containg various part to include various parts of that object we need map
         const msg = error.details.map(el => el.message).join(',')
@@ -79,75 +79,75 @@ app.get('/', (req, res) => {
 
 //Listing all the villas
 app.get('/villas', async (req, res) => {
-    const campgrounds = await Campground.find({});
-    res.render('villas', { campgrounds })
+    const villas = await villa.find({});
+    res.render('villas', { villas })
 });
 
 
 
-//Creating new campground
-app.get('/campgrounds/new', (req, res) => {
+//Creating new villa
+app.get('/villas/new', (req, res) => {
     res.render('new');
 })
-app.post('/campgrounds', validatevilla, catchAsync(async (req, res, next) => {
-    // if (!req.body.campground) throw new ExpressError('Invalid Campground data ', 404)
-    const campground = new Campground(req.body.campground);
-    await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`);
+app.post('/villas', validatevilla, catchAsync(async (req, res, next) => {
+    // if (!req.body.villa) throw new ExpressError('Invalid villa data ', 404)
+    const villa = new villa(req.body.villa);
+    await villa.save();
+    res.redirect(`/villas/${villa._id}`);
 }))
 
 
 
 
 
-//Get campground by id
-app.get('/campgrounds/:id', catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id).populate('reviews')
-    res.render('show', { campground })
+//Get villa by id
+app.get('/villas/:id', catchAsync(async (req, res) => {
+    const villa = await villa.findById(req.params.id).populate('reviews')
+    res.render('show', { villa })
 }))
 
 
 
 
-//Edit the campground after found
-app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id)
-    res.render('edit', { campground })
+//Edit the villa after found
+app.get('/villas/:id/edit', catchAsync(async (req, res) => {
+    const villa = await villa.findById(req.params.id)
+    res.render('edit', { villa })
 }))
-app.put('/campgrounds/:id', catchAsync(async (req, res) => {
+app.put('/villas/:id', catchAsync(async (req, res) => {
     const { id } = req.params;
-    const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });//(... is the sprread operator)
-    res.redirect(`/campgrounds/${campground._id}`)
+    const villa = await villa.findByIdAndUpdate(id, { ...req.body.villa });//(... is the sprread operator)
+    res.redirect(`/villas/${villa._id}`)
 }));
 
 
-//Delete Campground
-app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
+//Delete villa
+app.delete('/villas/:id', catchAsync(async (req, res) => {
     const { id } = req.params;
-    await Campground.findByIdAndDelete(id);
-    res.redirect('/campgrounds');
+    await villa.findByIdAndDelete(id);
+    res.redirect('/villas');
 }))
 
 
 //reviews model
-app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id);
+app.post('/villas/:id/reviews', validateReview, catchAsync(async (req, res) => {
+    const villa = await villa.findById(req.params.id);
     const review = new Review(req.body.review);
-    campground.reviews.push(review);
+    villa.reviews.push(review);
     await review.save();
-    await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`)
+    await villa.save();
+    res.redirect(`/villas/${villa._id}`)
 
 }))
 
 //deletigng the reviews
-app.delete('/campgrounds/:id/reviews/:reviewId', catchAsync(async (req, res) => {
+app.delete('/villas/:id/reviews/:reviewId', catchAsync(async (req, res) => {
     // await Review.findByIdAndDelete(req.)
-    // we are removing review id from only review table but from campground atable we need $pull method 
+    // we are removing review id from only review table but from villa atable we need $pull method 
     const { id, reviewId } = req.params;
     await Review.findByIdAndDelete(reviewId);
-    await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
-    res.redirect(`/campgrounds/${id}`)
+    await villa.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    res.redirect(`/villas/${id}`)
 
 
 }))
