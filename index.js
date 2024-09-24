@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');// method override for html forms using middleware 
-const villa = require('./models/villas');
+const villa = require('./models/villa');
 const app = express();
 const ejsmate = require('ejs-mate')
 
@@ -30,7 +30,7 @@ const catchAsync = require('./utils/catchAsync')
 
 //Joi installing for validation of input data
 const Joi = require('joi')
-const { villaSchema, reviewSchema } = require('./schemas')
+const { villaSchema,reviewSchema} = require('./schemas')
 
 //Using middleware to validate the villa       
 const validatevilla = (req, res, next) => {
@@ -80,7 +80,7 @@ app.get('/', (req, res) => {
 //Listing all the villas
 app.get('/villas', async (req, res) => {
     const villas = await villa.find({});
-    res.render('villas', { villas })
+    res.render('villaslist', { villas })
 });
 
 

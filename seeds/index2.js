@@ -7,7 +7,7 @@
 const { default: mongoose } = require('mongoose');
 const cities = require('./cities');
 const { places, descriptors } = require('./seedhelper');//destructuring assingment importinmg two seperate variable in single line of code 
-const villas= require('../models/villas');
+const villas = require('../models/villa');
 
 //creating db
 mongoose.connect('mongodb://127.0.0.1:27017/villas', {
@@ -48,6 +48,6 @@ const seedDB = async () => {
     }
 }
 
-seedDB().then(()=> {
+seedDB().then(() => {
     mongoose.connection.close();
 })
