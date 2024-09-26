@@ -19,7 +19,7 @@ const villaSchema = new Schema({
 
 villaSchema.post('findOneAndDelete', async function (doc) {
     if (doc) {
-        await Review.remove({ // from review table  remove the id's of the review which ar present in the campground atable 
+        await Review.deleteMany({ // from review table  remove the id's of the review which ar present in the campground atable 
             _id: { $in: doc.reviews }
         })
     }
