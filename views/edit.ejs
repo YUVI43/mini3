@@ -18,6 +18,7 @@
           type="text"
           id="title"
           name="villa[title]"
+          required
           value="<%=villa.title %>">
         
       </div>
@@ -28,6 +29,7 @@
           type="text"
           id="location"
           name="villa[location]"
+          required
           value="<%=villa.location %>">
         
       </div>
@@ -38,6 +40,7 @@
           type="text"
           id="image"
           name="villa[image]"
+          required
           value="<%=villa.image %>">
         
       </div>
@@ -49,6 +52,33 @@
      <a href="/villas/<%= villa._id%>">Back To villa</a> 
   </div>
 </div>
+
+
+<script>
+  // Example starter JavaScript for disabling form submissions if there are invalid fields
+  (function () {
+    "use strict";
+
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.querySelectorAll(".validate_form");
+
+    // Loop over them and prevent submission
+    Array.from(forms).forEach(function (form) {
+      form.addEventListener(
+        "submit",
+        function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
+</script>
 
 
 
