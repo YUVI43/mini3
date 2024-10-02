@@ -5,7 +5,8 @@ const methodOverride = require('method-override');// method override for html fo
 const Villa = require('./models/villa');
 const app = express();
 const ejsmate = require('ejs-mate')
-
+const session = require('express-session');
+const flash = require('connect-flash');
 const campgrounds = require('./routes/campgrounds');
 
 //here give the name according which you gave in the seeds/index2 folder for database using connect (replace ** with name of db you given)
@@ -49,10 +50,24 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));//for form method overriding , for overriding drawback of the form
 
+const sessionConfig = {
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true,
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60 * 24 * 7
+    }
+}
+app.use(session(sessionConfig))
+app.use(flash());
 
-
-
-
+app.use((req, res, next) => {
+   res.locals.success = req.flash('success');
+   res.locals.error = req.flash('error');
+   next();
+})
 
 
 
@@ -86,6 +101,6 @@ app.use((err, req, res, next) => {
 });
 
 
-app.listen(5000, () => {
-    console.log('Serving on port 5000')
+app.listen(5002, () => {
+    console.log('Serving on port 5002')
 })

@@ -43,12 +43,17 @@ router.post('/', validateVilla, catchAsync(async (req, res, next) => {
   // if (!req.body.villa) throw new ExpressError('Invalid villa data ', 404)
   const villa = new Villa(req.body.villa);
   await villa.save();
+  req.flash('success', 'Successfully made a new campground');
   res.redirect(`/villas/${villa._id}`);
 }));
 
 // Get villa by id
 router.get('/:id', catchAsync(async (req, res) => {
   const villa = await Villa.findById(req.params.id).populate('reviews');
+  if(!villa){
+    req.flash('error', 'Cannot find that villa!');
+    return res.redirect('/campgrounds');
+  }
   res.render('show', { villa });
 }));
 
@@ -61,6 +66,7 @@ router.get('/:id/edit', catchAsync(async (req, res) => {
 router.put('/:id', catchAsync(async (req, res) => {
   const { id } = req.params;
   const villa = await Villa.findByIdAndUpdate(id, { ...req.body.villa }); // (... is the spread operator)
+  req.flash('success', 'Successfully updated Villa!');
   res.redirect(`/villas/${villa._id}`);
 }));
 
@@ -68,6 +74,7 @@ router.put('/:id', catchAsync(async (req, res) => {
 router.delete('/:id', catchAsync(async (req, res) => {
   const { id } = req.params;
   await Villa.findByIdAndDelete(id);
+  req.flash('success', 'Successfully deleted!');
   res.redirect('/villas');
 }));
 
@@ -78,6 +85,7 @@ router.post('/:id/reviews', validateReview, catchAsync(async (req, res) => {
   villa.reviews.push(review);
   await review.save();
   await villa.save();
+  req.flash('success', 'Created new Review!');
   res.redirect(`/villas/${villa._id}`);
 }));
 
@@ -91,6 +99,7 @@ router.delete('/:id/reviews/:reviewId', catchAsync(async (req, res) => {
   const { id, reviewId } = req.params;
   await Review.findByIdAndDelete(reviewId);
   await Villa.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+  req.flash('success', 'Successfully deleted!');
   res.redirect(`/villas/${id}`);
 }));
 
